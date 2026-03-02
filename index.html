@@ -26,6 +26,42 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+
+/* ── BLOG NAV ── */
+.blog-nav {
+  background: linear-gradient(180deg, #1a1208 0%, #2a1f0e 100%);
+  border-bottom: 2px solid var(--gold-deep);
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  margin: -40px -20px 40px;
+}
+.blog-nav-inner {
+  max-width: 1100px; margin: 0 auto;
+  padding: 0 24px;
+  display: flex; align-items: center;
+  justify-content: space-between; gap: 16px;
+}
+.blog-nav-logo {
+  font-family: 'UnifrakturMaguntia', cursive;
+  font-size: 1.4rem;
+  color: var(--gold-light);
+  text-decoration: none;
+  padding: 12px 0;
+  text-shadow: 0 0 12px rgba(212,175,55,0.4);
+  white-space: nowrap;
+}
+.blog-nav-links { display: flex; gap: 0; }
+.blog-nav-links a {
+  font-family: 'Cinzel', serif;
+  font-size: 0.68rem; font-weight: 600;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--stone); text-decoration: none;
+  padding: 14px 16px;
+  transition: color 0.2s, background 0.2s;
+  white-space: nowrap;
+}
+.blog-nav-links a:hover { color: var(--gold-light); background: rgba(212,175,55,0.08); }
+.blog-nav-links a.active { color: var(--gold-bright); border-bottom: 2px solid var(--gold-bright); }
 body {
   background: var(--parchment);
   background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23c9a84c' fill-opacity='0.07'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
@@ -345,6 +381,18 @@ body {
 </style>
 </head>
 <body>
+
+<div class="blog-nav">
+  <div class="blog-nav-inner">
+    <a class="blog-nav-logo" href="https://lanternslore.blogspot.com">lanterns &amp; lore</a>
+    <div class="blog-nav-links">
+      <a href="https://lanternslore.blogspot.com">Home</a>
+      <a href="https://lanternslore.blogspot.com/search/label/Reviews">Reviews</a>
+      <a href="https://lanternslore.blogspot.com/search/label/Reading%20Lists">Reading Lists</a>
+      <a href="https://vicguerrra.github.io/lanterns-lore/" class="active">Reading Projects</a>
+    </div>
+  </div>
+</div>
 
 <div class="page-header">
   <h1>Reading Projects</h1>
