@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Reading Projects — Lanterns & Lore</title>
+<link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet"/>
+<style>
+/* ── VARIABLES ── */
+:root {
+  --gold-deep:   #b8860b;
+  --gold-bright: #d4af37;
+  --gold-light:  #f0d070;
+  --gold-pale:   #faf3dc;
+  --parchment:   #fdf8ef;
+  --parchment-dk:#f5ead5;
+  --ink:         #2a1f0e;
+  --ink-light:   #4a3828;
+  --stone:       #e8dfc8;
+  --stone-dk:    #c8bfa8;
+  --border-orn:  #c9a84c;
+  --read-color:  #5a8a5a;
+  --reading-color: #b8860b;
+  --unread-color:#9e9e9e;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--parchment);
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23c9a84c' fill-opacity='0.07'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 20px 80px;
+}
+
+/* ── PAGE HEADER ── */
+.page-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+.page-header h1 {
+  font-family: 'UnifrakturMaguntia', cursive;
+  font-size: clamp(2.2rem, 5vw, 3.2rem);
+  color: var(--ink);
+  text-shadow: 1px 2px 0 rgba(201,168,76,0.4);
+  margin-bottom: 8px;
+}
+.page-header p {
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  color: var(--ink-light);
+  font-size: 1rem;
+  opacity: 0.8;
+}
+.orn-divider {
+  display: flex; align-items: center; gap: 12px;
+  color: var(--gold-deep); font-size: 1rem;
+  margin: 14px auto; max-width: 400px;
+}
+.orn-divider::before, .orn-divider::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(to right, transparent, var(--border-orn), transparent);
+}
+
+/* ── TABS ── */
+.tabs-wrapper {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.tab-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  border-bottom: 2px solid var(--border-orn);
+  margin-bottom: 0;
+}
+
+.tab-btn {
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ink-light);
+  background: var(--parchment-dk);
+  border: 1px solid var(--border-orn);
+  border-bottom: none;
+  padding: 12px 22px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: -2px;
+  position: relative;
+}
+.tab-btn:hover {
+  color: var(--gold-deep);
+  background: var(--parchment);
+}
+.tab-btn.active {
+  background: var(--parchment);
+  color: var(--gold-deep);
+  border-bottom: 2px solid var(--parchment);
+  z-index: 1;
+}
+
+/* ── TAB PANELS ── */
+.tab-panel {
+  display: none;
+  background: var(--parchment);
+  border: 1px solid var(--border-orn);
+  border-top: none;
+  padding: 32px 28px;
+}
+.tab-panel.active { display: block; }
+
+/* ── SERIES HEADER ── */
+.series-header {
+  margin-bottom: 28px;
+}
+.series-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.series-author {
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  color: var(--ink-light);
+  font-size: 0.95rem;
+  margin-bottom: 14px;
+}
+.series-progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.progress-bar-wrap {
+  flex: 1;
+  height: 6px;
+  background: var(--stone);
+  border-radius: 3px;
+  overflow: hidden;
+  max-width: 300px;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold-deep), var(--gold-bright));
+  border-radius: 3px;
+  transition: width 0.6s ease;
+}
+.progress-text {
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  color: var(--gold-deep);
+}
+
+/* ── LEGEND ── */
+.legend {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+  padding: 10px 14px;
+  background: rgba(201,168,76,0.06);
+  border: 1px solid rgba(201,168,76,0.2);
+  border-radius: 2px;
+  width: fit-content;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-light);
+}
+.legend-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.dot-read    { background: var(--read-color); }
+.dot-reading { background: var(--reading-color); }
+.dot-unread  { background: var(--unread-color); }
+
+/* ── SUB-SERIES LABEL ── */
+.subseries-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+  border-bottom: 1px solid rgba(201,168,76,0.3);
+  padding-bottom: 6px;
+  margin: 28px 0 16px;
+}
+.subseries-label:first-of-type { margin-top: 0; }
+
+/* ── BOOKS GRID ── */
+.books-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+/* ── BOOK CARD ── */
+.book-card {
+  position: relative;
+  width: 100px;
+  cursor: default;
+  transition: transform 0.2s;
+}
+.book-card:hover { transform: translateY(-4px); }
+
+.book-cover-wrap {
+  position: relative;
+  width: 100px;
+  height: 152px;
+  border: 1px solid var(--border-orn);
+  box-shadow: 3px 4px 14px rgba(0,0,0,0.22);
+  overflow: hidden;
+  background: var(--stone);
+}
+.book-cover-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* placeholder cover */
+.cover-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  text-align: center;
+  background: linear-gradient(160deg, var(--parchment-dk), var(--stone));
+}
+.cover-placeholder span {
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--ink-light);
+  line-height: 1.3;
+}
+
+/* status badge */
+.status-badge {
+  position: absolute;
+  top: 5px; right: 5px;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.65rem;
+  font-weight: bold;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  z-index: 2;
+}
+.status-read    { background: var(--read-color); color: #fff; }
+.status-reading { background: var(--reading-color); color: #fff; }
+.status-unread  { background: var(--unread-color); color: #fff; opacity: 0.7; }
+
+/* stars on cover */
+.book-stars {
+  position: absolute;
+  bottom: 4px; left: 0; right: 0;
+  display: flex; justify-content: center; gap: 1px;
+  font-size: 0.6rem;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.7));
+}
+
+/* overlay link for read books */
+.book-link {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  text-decoration: none;
+}
+
+/* book title below cover */
+.book-title-label {
+  font-family: 'IM Fell English', serif;
+  font-size: 0.72rem;
+  color: var(--ink-light);
+  text-align: center;
+  margin-top: 6px;
+  line-height: 1.3;
+}
+.book-num {
+  font-family: 'Cinzel', serif;
+  font-size: 0.58rem;
+  color: var(--stone-dk);
+  text-align: center;
+  margin-top: 2px;
+  letter-spacing: 0.08em;
+}
+
+/* tooltip on hover */
+.book-card:hover .book-tooltip { display: block; }
+.book-tooltip {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: var(--stone);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.78rem;
+  padding: 6px 10px;
+  border: 1px solid var(--gold-deep);
+  white-space: nowrap;
+  z-index: 10;
+  pointer-events: none;
+}
+.book-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%; left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--gold-deep);
+}
+
+@media (max-width: 600px) {
+  .book-card { width: 80px; }
+  .book-cover-wrap { width: 80px; height: 122px; }
+  .tab-btn { padding: 10px 14px; font-size: 0.62rem; }
+  body { padding: 24px 12px 60px; }
+}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Reading Projects</h1>
+  <div class="orn-divider">&#9670;</div>
+  <p>Epic journeys through the greatest fantasy series ever written</p>
+</div>
+
+<div class="tabs-wrapper">
+
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="showTab('rote')">Realm of the Elderlings</button>
+    <button class="tab-btn" onclick="showTab('wot')">The Wheel of Time</button>
+    <button class="tab-btn" onclick="showTab('cosmere')">Cosmere</button>
+    <button class="tab-btn" onclick="showTab('malazan')">Malazan</button>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- TAB 1: REALM OF THE ELDERLINGS            -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="tab-panel active" id="tab-rote">
+    <div class="series-header">
+      <div class="series-title">Realm of the Elderlings</div>
+      <div class="series-author">Robin Hobb</div>
+      <div class="series-progress">
+        <div class="progress-bar-wrap"><div class="progress-bar-fill" id="prog-rote"></div></div>
+        <div class="progress-text" id="prog-rote-text"></div>
+      </div>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot dot-read"></div>Read</div>
+      <div class="legend-item"><div class="legend-dot dot-reading"></div>Reading</div>
+      <div class="legend-item"><div class="legend-dot dot-unread"></div>Not yet</div>
+    </div>
+
+    <div class="subseries-label">Farseer Trilogy</div>
+    <div class="books-grid" id="grid-rote-1"></div>
+
+    <div class="subseries-label">The Liveship Traders</div>
+    <div class="books-grid" id="grid-rote-2"></div>
+
+    <div class="subseries-label">The Tawny Man Trilogy</div>
+    <div class="books-grid" id="grid-rote-3"></div>
+
+    <div class="subseries-label">Rain Wild Chronicles</div>
+    <div class="books-grid" id="grid-rote-4"></div>
+
+    <div class="subseries-label">Fitz and the Fool Trilogy</div>
+    <div class="books-grid" id="grid-rote-5"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- TAB 2: THE WHEEL OF TIME                  -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="tab-panel" id="tab-wot">
+    <div class="series-header">
+      <div class="series-title">The Wheel of Time</div>
+      <div class="series-author">Robert Jordan & Brandon Sanderson</div>
+      <div class="series-progress">
+        <div class="progress-bar-wrap"><div class="progress-bar-fill" id="prog-wot"></div></div>
+        <div class="progress-text" id="prog-wot-text"></div>
+      </div>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot dot-read"></div>Read</div>
+      <div class="legend-item"><div class="legend-dot dot-reading"></div>Reading</div>
+      <div class="legend-item"><div class="legend-dot dot-unread"></div>Not yet</div>
+    </div>
+    <div class="books-grid" id="grid-wot"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- TAB 3: COSMERE                            -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="tab-panel" id="tab-cosmere">
+    <div class="series-header">
+      <div class="series-title">The Cosmere</div>
+      <div class="series-author">Brandon Sanderson</div>
+      <div class="series-progress">
+        <div class="progress-bar-wrap"><div class="progress-bar-fill" id="prog-cosmere"></div></div>
+        <div class="progress-text" id="prog-cosmere-text"></div>
+      </div>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot dot-read"></div>Read</div>
+      <div class="legend-item"><div class="legend-dot dot-reading"></div>Reading</div>
+      <div class="legend-item"><div class="legend-dot dot-unread"></div>Not yet</div>
+    </div>
+
+    <div class="subseries-label">Elantris</div>
+    <div class="books-grid" id="grid-cosmere-elantris"></div>
+
+    <div class="subseries-label">Mistborn Era 1 — The Original Trilogy</div>
+    <div class="books-grid" id="grid-cosmere-mb1"></div>
+
+    <div class="subseries-label">Mistborn Era 2 — Wax and Wayne</div>
+    <div class="books-grid" id="grid-cosmere-mb2"></div>
+
+    <div class="subseries-label">The Stormlight Archive</div>
+    <div class="books-grid" id="grid-cosmere-sa"></div>
+
+    <div class="subseries-label">Warbreaker</div>
+    <div class="books-grid" id="grid-cosmere-wb"></div>
+
+    <div class="subseries-label">Arcanum Unbounded (Novellas)</div>
+    <div class="books-grid" id="grid-cosmere-au"></div>
+
+    <div class="subseries-label">The Sunlit Man</div>
+    <div class="books-grid" id="grid-cosmere-slm"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- TAB 4: MALAZAN                            -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="tab-panel" id="tab-malazan">
+    <div class="series-header">
+      <div class="series-title">Malazan Book of the Fallen</div>
+      <div class="series-author">Steven Erikson</div>
+      <div class="series-progress">
+        <div class="progress-bar-wrap"><div class="progress-bar-fill" id="prog-malazan"></div></div>
+        <div class="progress-text" id="prog-malazan-text"></div>
+      </div>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot dot-read"></div>Read</div>
+      <div class="legend-item"><div class="legend-dot dot-reading"></div>Reading</div>
+      <div class="legend-item"><div class="legend-dot dot-unread"></div>Not yet</div>
+    </div>
+    <div class="books-grid" id="grid-malazan"></div>
+  </div>
+
+</div><!-- /tabs-wrapper -->
+
+<script>
+// ── TAB SWITCHING ──
+function showTab(id) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+// ── DATA ──
+// status: 'read' | 'reading' | 'unread'
+// rating: 1-5 (only for read books)
+// review: URL to your review post (only for read books, set '' if not reviewed yet)
+// cover: URL to cover image (replace with real URLs)
+
+var SERIES = {
+
+  rote: {
+    progressId: 'rote',
+    groups: [
+      { gridId: 'grid-rote-1', books: [
+        { num: 1, title: "Assassin's Apprentice",   status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 2, title: "Royal Assassin",           status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 3, title: "Assassin's Quest",         status: 'unread', rating: 0, review: '', cover: '' },
+      ]},
+      { gridId: 'grid-rote-2', books: [
+        { num: 4, title: "Ship of Magic",            status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 5, title: "The Mad Ship",             status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 6, title: "Ship of Destiny",          status: 'unread', rating: 0, review: '', cover: '' },
+      ]},
+      { gridId: 'grid-rote-3', books: [
+        { num: 7, title: "Fool's Errand",            status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 8, title: "Golden Fool",              status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 9, title: "Fool's Fate",              status: 'unread', rating: 0, review: '', cover: '' },
+      ]},
+      { gridId: 'grid-rote-4', books: [
+        { num: 10, title: "Dragon Keeper",           status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 11, title: "Dragon Haven",            status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 12, title: "City of Dragons",         status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 13, title: "Blood of Dragons",        status: 'unread', rating: 0, review: '', cover: '' },
+      ]},
+      { gridId: 'grid-rote-5', books: [
+        { num: 14, title: "Fool's Assassin",         status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 15, title: "Fool's Quest",            status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 16, title: "Assassin's Fate",         status: 'unread', rating: 0, review: '', cover: '' },
+      ]},
+    ]
+  },
+
+  wot: {
+    progressId: 'wot',
+    groups: [
+      { gridId: 'grid-wot', books: [
+        { num: 0,  title: "New Spring (Prequel)",    status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 1,  title: "The Eye of the World",    status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 2,  title: "The Great Hunt",          status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 3,  title: "The Dragon Reborn",       status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 4,  title: "The Shadow Rising",       status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 5,  title: "The Fires of Heaven",     status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 6,  title: "Lord of Chaos",           status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 7,  title: "A Crown of Swords",       status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 8,  title: "The Path of Daggers",     status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 9,  title: "Winter's Heart",          status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 10, title: "Crossroads of Twilight",  status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 11, title: "Knife of Dreams",         status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 12, title: "The Gathering Storm",     status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 13, title: "Towers of Midnight",      status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 14, title: "A Memory of Light",       status: 'unread', rating: 0, review: '', cover: '' },
+      ]}
+    ]
+  },
+
+  cosmere: {
+    progressId: 'cosmere',
+    groups: [
+      { gridId: 'grid-cosmere-elantris', books: [
+        { num: 1, title: "Elantris",                 status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 2, title: "The Hope of Elantris",     status: 'unread', rating: 0, review: '', cover: '' },
+      ]},
+      { gridId: 'grid-cosmere-mb1', books: [
+        { num: 1, title: "The Final Empire",         status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 2, title: "The Well of Ascension",    status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 3, title: "The Hero of Ages",         status: 'unread', rating: 0, review: '', cover: '' },
+      ]},
+      { gridId: 'grid-cosmere-mb2', books: [
+        { num: 1, title: "The Alloy of Law",         status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 2, title: "Shadows of Self",          status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 3, title: "The Bands of Mourning",    status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 4, title: "The Lost Metal",           status: 'unread', rating: 0, review: '', cover: '' },
+      ]},
+      { gridId: 'grid-cosmere-sa', books: [
+        { num: 1, title: "The Way of Kings",         status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 2, title: "Words of Radiance",        status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 2.5, title: "Edgedancer",             status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 3, title: "Oathbringer",              status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 3.5, title: "Dawnshard",              status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 4, title: "Rhythm of War",            status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 5, title: "Wind and Truth",           status: 'unread', rating: 0, review: '', cover: '' },
+      ]},
+      { gridId: 'grid-cosmere-wb', books: [
+        { num: 1, title: "Warbreaker",               status: 'unread', rating: 0, review: '', cover: '' },
+      ]},
+      { gridId: 'grid-cosmere-au', books: [
+        { num: 1, title: "The Emperor's Soul",       status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 2, title: "Shadows for Silence",      status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 3, title: "Sixth of the Dusk",        status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 4, title: "Mistborn: Secret History", status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 5, title: "White Sand",               status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 6, title: "Horneater",                status: 'unread', rating: 0, review: '', cover: '' },
+      ]},
+      { gridId: 'grid-cosmere-slm', books: [
+        { num: 1, title: "The Sunlit Man",           status: 'unread', rating: 0, review: '', cover: '' },
+      ]},
+    ]
+  },
+
+  malazan: {
+    progressId: 'malazan',
+    groups: [
+      { gridId: 'grid-malazan', books: [
+        { num: 1,  title: "Gardens of the Moon",     status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 2,  title: "Deadhouse Gates",         status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 3,  title: "Memories of Ice",         status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 4,  title: "House of Chains",         status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 5,  title: "Midnight Tides",          status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 6,  title: "The Bonehunters",         status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 7,  title: "Reaper's Gale",           status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 8,  title: "Toll the Hounds",         status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 9,  title: "Dust of Dreams",          status: 'unread', rating: 0, review: '', cover: '' },
+        { num: 10, title: "The Crippled God",        status: 'unread', rating: 0, review: '', cover: '' },
+      ]}
+    ]
+  }
+
+};
+
+// ── RENDER ──
+function renderStars(rating, status) {
+  if (status !== 'read' || !rating) return '';
+  var html = '';
+  for (var i = 1; i <= 5; i++) {
+    html += '<span style="color:' + (i <= rating ? '#f0d070' : 'rgba(255,255,255,0.3)') + '">&#9733;</span>';
+  }
+  return '<div class="book-stars">' + html + '</div>';
+}
+
+function renderBook(book) {
+  var statusClass = 'status-' + book.status;
+  var statusIcon  = book.status === 'read' ? '&#10003;' : (book.status === 'reading' ? '&#9679;' : '');
+  var coverHtml   = book.cover
+    ? '<img src="' + book.cover + '" alt="' + book.title + '" loading="lazy"/>'
+    : '<div class="cover-placeholder"><span>' + book.title + '</span></div>';
+  var linkOpen  = (book.status === 'read' && book.review) ? '<a class="book-link" href="' + book.review + '" target="_blank" title="Read review"></a>' : '';
+  var linkClose = (book.status === 'read' && book.review) ? '' : '';
+
+  return '<div class="book-card">'
+    + '<div class="book-cover-wrap">'
+    + coverHtml
+    + (statusIcon ? '<div class="status-badge ' + statusClass + '">' + statusIcon + '</div>' : '')
+    + renderStars(book.rating, book.status)
+    + (book.status === 'read' && book.review ? '<a class="book-link" href="' + book.review + '" target="_blank" title="Read review"></a>' : '')
+    + '</div>'
+    + '<div class="book-tooltip">' + book.title + '</div>'
+    + '<div class="book-title-label">' + book.title + '</div>'
+    + '<div class="book-num">Nº ' + book.num + '</div>'
+    + '</div>';
+}
+
+function calcProgress(seriesKey) {
+  var series = SERIES[seriesKey];
+  var total = 0, read = 0;
+  series.groups.forEach(function(g) {
+    g.books.forEach(function(b) {
+      total++;
+      if (b.status === 'read') read++;
+    });
+  });
+  return { total: total, read: read };
+}
+
+function renderAll() {
+  Object.keys(SERIES).forEach(function(key) {
+    var series = SERIES[key];
+    series.groups.forEach(function(g) {
+      var el = document.getElementById(g.gridId);
+      if (!el) return;
+      el.innerHTML = g.books.map(renderBook).join('');
+    });
+    var prog = calcProgress(key);
+    var pct  = prog.total ? Math.round((prog.read / prog.total) * 100) : 0;
+    var fill = document.getElementById('prog-' + series.progressId);
+    var txt  = document.getElementById('prog-' + series.progressId + '-text');
+    if (fill) fill.style.width = pct + '%';
+    if (txt)  txt.textContent  = prog.read + ' / ' + prog.total + ' books read';
+  });
+}
+
+renderAll();
+</script>
+
+</body>
+</html>
